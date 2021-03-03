@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Search{% endblock title %}
+
+{% block description %}
+Search Page: Promise Keeper
+{% endblock description %}
+
+{% block style %}
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: #000000;
+    border-color: #000000;
+}
+{% endblock style %}
+
+{% block body %}
+
+<div class="container" my=3 style="padding-top: 1%;">
+<h3>Search Results:</h3>
+{% if page_obj|length < 1 and politician1|length < 1 and parties1|length < 1 %}
+<p>Your search - {{query}}- did not match any Promise/Politician/Political Party</p>
+
+</p>Suggestions:</p>
+<ul>
+<li>Make sure that all words are spelled correctly</li>
+<li>Try Name of any Politician eg. Narendra Modi</li>
+<li>Try Political Party name eg. BJP</li>
+<li>Try Fewer Keywords</li>
+</ul>
+{% endif %}
+
+{% if politician1|length != 0 %}
+<h4 class="card-text">Politicians-</h4>
+{% for politician in politician1 %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-text"><a class="text-reset text-decoration-none .hover-zoom " href = "politician/{{politician.slug}}">{{politician.name}}</a></h5>
+    <p class="card-text"><a class="text-reset text-decoration-none .hover-zoom " href = "/party/{{politician.party.slug}}">{{politician.party}}</a></p>
+  </div>
+</div>
+</br>
+{% endfor %}
+{% endif %}
+
+{% if politician1|length > 15 %}
+<nav aria-label="Page navigation d-inline-flex" style="align:centre;">
+	<ul class="pagination justify-content-center">
+		<span class="page-item">
+			{% if politician1.has_previous %}
+			<li class="page-item step-links d-inline-flex">
+			{% comment %} <a class="page-link" href="?page=1" aria-label="1"> {% endcomment %}
+      		<a class="page-link text-dark" href="?page={{ politician1.previous_page_number }}" aria-label="Previous">
+        	<span aria-hidden="true">&laquo;</span>
+      		</a></li>
+			<li class="page-item current d-inline-flex"><a class="page-link text-dark" href="?page={{ politician1.previous_page_number }}">{{ politician1.previous_page_number }}</a></li>
+			{% comment %} <li class="page-item current page-link d-inline-flex"> {{ page_obj.number }}  </li> {% endcomment %}
+			{% endif %}
+
+			
+			<li class="page-item current d-inline-flex active"><a class="page-link text-white" href="?page={{ politician1.number }}">{{ politician1.number }}</a></li>
+    		
+
+			{% if politician1.has_next %}
+			{% comment %} <li class="page-item current page-link d-inline-flex">  {{ page_obj.number }} </li>   {% endcomment %}
+      		<li class="page-item current d-inline-flex"><a class="page-link text-dark" href="?page={{ politician1.next_page_number }}">{{ politician1.next_page_number }}</a></li>
+			<li class="page-item current d-inline-flex"><a class="page-link text-dark" href="?page={{ politician1.next_page_number }}" aria-label="Next">
+        	{% comment %} <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a> {% endcomment %}
+			<span aria-hidden="true">&raquo;</span>
+      		</a>
+    		</li>
+			{% endif %}
+		</span>
+	</ul>
+</nav>
+{% endif %}
+
+{% if parties1|length != 0 %}
+<h4 class="card-text">Parties-</h4>
+{% for party in parties1 %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-text"><a class="text-reset text-decoration-none .hover-zoom " href = "/party/{{party.slug}}">{{party.name}}</a></h5>
+  </div>
+</div>
+</br>
+{% endfor %}
+{% endif %}
+
+{% if parties1|length > 15 %}
+<nav aria-label="Page navigation d-inline-flex" style="align:centre;">
+	<ul class="pagination justify-content-center">
+		<span class="page-item">
+			{% if parties1.has_previous %}
+			<li class="page-item step-links d-inline-flex">
+			{% comment %} <a class="page-link" href="?page=1" aria-label="1"> {% endcomment %}
+      		<a class="page-link text-dark" href="?page={{ parties1.previous_page_number }}" aria-label="Previous">
+        	<span aria-hidden="true">&laquo;</span>
+      		</a></li>
+			<li class="page-item current d-inline-flex"><a class="page-link text-dark" href="?page={{ parties1.previous_page_number }}">{{ parties1.previous_page_number }}</a></li>
+			{% comment %} <li class="page-item current page-link d-inline-flex"> {{ page_obj.number }}  </li> {% endcomment %}
+			{% endif %}
+
+			
+			<li class="page-item current d-inline-flex active"><a class="page-link text-white" href="?page={{ parties1.number }}">{{ parties1.number }}</a></li>
+    		
+
+			{% if parties1.has_next %}
+			{% comment %} <li class="page-item current page-link d-inline-flex">  {{ page_obj.number }} </li>   {% endcomment %}
+      		<li class="page-item current d-inline-flex"><a class="page-link text-dark" href="?page={{ parties1.next_page_number }}">{{ parties1.next_page_number }}</a></li>
+			<li class="page-item current d-inline-flex"><a class="page-link text-dark" href="?page={{ parties1.next_page_number }}" aria-label="Next">
+        	{% comment %} <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a> {% endcomment %}
+			<span aria-hidden="true">&raquo;</span>
+      		</a>
+    		</li>
+			{% endif %}
+		</span>
+	</ul>
+</nav>
+{% endif %}
+
+{% if page_obj|length != 0 %}
+<h4 class="card-text">Promises-</h4>
+{% for promise in page_obj %}
+<div class="card">
+  <div class="card-header">
+    {% if promise.status == "C" %}
+    <h6 class='btn btn-success'>Completed</h6>
+    {% endif %}
+	{% if promise.status == "NC" %}
+    <span class="badge bg-danger text-dark">Not Completed</span>
+    {% endif %}
+
+    {% if promise.status == "P" %}
+    <span class="badge bg-warning text-dark">Ongoing</span>
+    {% endif %}
+
+    {% if promise.status == "A" %}
+    <span class="badge bg-secondary">Abandoned</span>
+    {% endif %}
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">{{promise.name | truncatechars:100}}</h5>
+    <p class="card-text"><a class="text-reset text-decoration-none .hover-zoom " href = "politician/{{promise.by.slug}}">{{promise.by}}</a>  <a class="text-reset text-decoration-none .hover-zoom " href = "party/{{promise.party.slug}}">({{promise.party}})</a></p>
+    <a href="/{{promise.slug}}" class="btn btn-white btn-outline-dark">Details</a>
+  </div>
+</div>
+</br>
+{% endfor %}
+</div>
+{% endif %}
+
+{% if page_obj|length > 15 %}
+<nav aria-label="Page navigation d-inline-flex" style="align:centre;">
+	<ul class="pagination justify-content-center">
+		<span class="page-item">
+			{% if page_obj.has_previous %}
+			<li class="page-item step-links d-inline-flex">
+			{% comment %} <a class="page-link" href="?page=1" aria-label="1"> {% endcomment %}
+      		<a class="page-link text-dark" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+        	<span aria-hidden="true">&laquo;</span>
+      		</a></li>
+			<li class="page-item current d-inline-flex"><a class="page-link text-dark" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a></li>
+			{% comment %} <li class="page-item current page-link d-inline-flex"> {{ page_obj.number }}  </li> {% endcomment %}
+			{% endif %}
+
+			
+			<li class="page-item current d-inline-flex active"><a class="page-link text-white" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a></li>
+    		
+
+			{% if page_obj.has_next %}
+			{% comment %} <li class="page-item current page-link d-inline-flex">  {{ page_obj.number }} </li>   {% endcomment %}
+      		<li class="page-item current d-inline-flex"><a class="page-link text-dark" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a></li>
+			<li class="page-item current d-inline-flex"><a class="page-link text-dark" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+        	{% comment %} <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a> {% endcomment %}
+			<span aria-hidden="true">&raquo;</span>
+      		</a>
+    		</li>
+			{% endif %}
+		</span>
+	</ul>
+</nav>
+{% endif %}
+
+{% endblock body %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Politician List{% endblock title %}
+
+{% block politician_list %}active{% endblock politician_list %}
+
+{% block description %}
+List of Politicians: Promise Keeper
+{% endblock description %}
+
+{% block style %}
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: #000000;
+    border-color: #000000;
+}
+{% endblock style %}
+
+
+{% block body %}
+
+<div class="container " style="padding-top: 1%;">
+<div class="row row-cols-1 row-cols-md-3 mb-3  text-center">
+
+{% for politician in page_obj %}
+
+    <div class="col">
+    <div class="card mb-4 shadow-sm" style="width: 18rem;">
+      <img src="/media/{{politician.image}}" style="width: 17.9rem;height: 23rem;" class="card-img-top mb-5 rounded" alt="{{politician.name}} image">
+      <div class="card-body">
+        <h5 class="card-title">{{politician.name}}</h5>
+        <p class="card-text"> <a class="text-reset text-decoration-none .hover-zoom " href = "/party/{{politician.party.slug}}">({{politician.party}})</a></p>
+        <a href="/politician/{{politician.slug}}" class="btn btn-white btn-outline-dark">View</a>
+      </div>
+    </div>
+    </div>
+{% endfor %}  
+</div> 
+</div>
+
+{% if page_obj|length > 0 %}
+<nav aria-label="Page navigation d-inline-flex" style="align:centre;">
+	<ul class="pagination justify-content-center">
+		<span class="page-item">
+			{% if page_obj.has_previous %}
+			<li class="page-item step-links d-inline-flex">
+			{% comment %} <a class="page-link" href="?page=1" aria-label="1"> {% endcomment %}
+      		<a class="page-link text-dark" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+        	<span aria-hidden="true">&laquo;</span>
+      		</a></li>
+			<li class="page-item current d-inline-flex"><a class="page-link text-dark" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a></li>
+			{% comment %} <li class="page-item current page-link d-inline-flex"> {{ page_obj.number }}  </li> {% endcomment %}
+			{% endif %}
+
+			
+			<li class="page-item current d-inline-flex active"><a class="page-link text-white" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a></li>
+    		
+
+			{% if page_obj.has_next %}
+			{% comment %} <li class="page-item current page-link d-inline-flex">  {{ page_obj.number }} </li>   {% endcomment %}
+      		<li class="page-item current d-inline-flex"><a class="page-link text-dark" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a></li>
+			<li class="page-item current d-inline-flex"><a class="page-link text-dark" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+        	{% comment %} <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a> {% endcomment %}
+			<span aria-hidden="true">&raquo;</span>
+      		</a>
+    		</li>
+			{% endif %}
+		</span>
+	</ul>
+</nav>
+{% endif %}
+
+{% endblock body %}

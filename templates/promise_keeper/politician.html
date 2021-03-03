@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% block title %}Politician{% endblock title %}
+
+{% block description %}
+{{politician.name}} Page: Promise Keeper Statistics
+{% endblock description %}
+
+{% block style %}
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: #000000;
+    border-color: #000000;
+}
+{% endblock style %}
+
+{% block body %}
+
+<div class="container " style="padding-top: 1%;">
+<div class="card mb-3 container border-0 " style="max-width: 99%;">
+  <div class="row g-0">
+    <div class="col-md-4 justify-content-sd-center">
+      <img src="/media/{{politician.image}}" class="shadow mb-5 rounded " alt="{{politician.name}} image">
+    </div>
+    <div class="col-md-8 justify-content-sd-center">
+      <div class="card-body text-center">
+
+        <h5 class="card-title fs-1">{{politician.name}}
+        {% if politician.status == True %}
+        <span class="fs-6 badge bg-secondary">Active</span>
+        {% endif %} </h5>
+
+        {% if politician.status == False %}
+        <span class="badge bg-secondary">Non Active</span>
+        {% endif %}
+        </h5>
+        <h5 ><strong>Party: </strong> <a class="text-reset text-decoration-none .hover-zoom " href = "/party/{{politician.party.slug}}">{{politician.party}}</a></h5>
+        <h5 ><strong>Score: </strong> {{politician.score}} (Out of 10)</h5>
+        <h5 ><strong>Post: </strong> {{politician.post}}</h5>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+ <div class="container">
+	<div class="row justify-content-md-center">
+	<!-- Content here -->
+	<div class="col-lg-4 justify-content-sd-center">
+		<canvas id="myChart" width="400" height="400"></canvas>
+	</div>
+	<div class="col-lg-6" style="padding-top:4px;">
+		<h5 class="text-center fw-light" style="color:rgb(0, 45, 179);">Total Promises Made</h5>
+		<h1 class="number text-center fw-light" style="color:rgb(0, 45, 179);">{{promise_count}}</h1>
+		<h5 class="text-center fw-light" style="color:rgb(51, 204, 51);">Completed</h5>
+		<h1 class="number text-center fw-light" style="color:rgb(51, 204, 51);">{{cpromise_count}}</h1>
+		<h5 class="text-center fw-light" style="color:rgb(255, 153, 0);">Ongoing</h5>
+		<h1 class="number text-center fw-light" style="color:rgb(255, 153, 0);">{{ppromise_count}}</h1>
+		<h5 class="text-center fw-light" style="color:rgb(255, 0, 0);">Not Completed</h5>
+		<h1 class="number text-center fw-light" style="color:rgb(255, 0, 0);">{{ncpromise_count}}</h1>
+		<h5 class="text-center fw-light" style="color:black;">Abolished</h5>
+		<h1 class="number text-center fw-light" style="color:black;">{{apromise_count}}</h1>
+	</div>
+	</div>
+	</br>
+</div>
+
+
+<div class="container" my=3>
+	{% for promise in page_obj %}
+
+
+	<div class="card">
+		<div class="card-header">
+			{% if promise.status == "C" %}
+			<h6 class='badge bg-success text-light'>Completed</h6>
+			{% endif %}
+			{% if promise.status == "NC" %}
+			<span class="badge bg-danger text-light">Not Completed</span>
+			{% endif %}
+
+			{% if promise.status == "P" %}
+			<span class="badge bg-warning text-dark">Ongoing</span>
+			{% endif %}
+
+			{% if promise.status == "A" %}
+			<span class="badge bg-secondary">Abandoned</span>
+			{% endif %}
+
+			{% if promise.rating == "Success" %}
+    		<span class="badge bg-success">Success</span>
+    		{% endif %}
+    		{% if promise.rating == "Failure" %}
+    		<span class="badge bg-danger">Failure</span>
+    		{% endif %}
+    		{% if promise.rating == "Fine" %}
+    		<span class="badge bg-warning">Fine</span>
+    		{% endif %}
+		</div>
+		<div class="card-body">
+			<h5 class="card-title">{{promise.name | truncatechars:100}}</h5>
+			<p class="card-text"><a class="text-reset text-decoration-none .hover-zoom "
+					href="/politician/{{promise.by.slug}}">{{promise.by}}</a> <a
+					class="text-reset text-decoration-none .hover-zoom "
+					href="party/{{promise.party.slug}}">({{promise.party}})</a></p>
+			<a href="/{{promise.slug}}" class="btn btn-white btn-outline-dark">Details</a>
+		</div>
+	</div>
+	</br>
+	{% endfor %}
+</div>
+  
+</div>
+{% if page_obj|length > 0 %}
+<nav aria-label="Page navigation d-inline-flex" style="align:centre;">
+	<ul class="pagination justify-content-center">
+		<span class="page-item">
+			{% if page_obj.has_previous %}
+			<li class="page-item step-links d-inline-flex">
+			{% comment %} <a class="page-link" href="?page=1" aria-label="1"> {% endcomment %}
+      		<a class="page-link text-dark" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+        	<span aria-hidden="true">&laquo;</span>
+      		</a></li>
+			<li class="page-item current d-inline-flex"><a class="page-link text-dark" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a></li>
+			{% comment %} <li class="page-item current page-link d-inline-flex"> {{ page_obj.number }}  </li> {% endcomment %}
+			{% endif %}
+
+			
+			<li class="page-item current d-inline-flex active"><a class="page-link text-white" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a></li>
+    		
+
+			{% if page_obj.has_next %}
+			{% comment %} <li class="page-item current page-link d-inline-flex">  {{ page_obj.number }} </li>   {% endcomment %}
+      		<li class="page-item current d-inline-flex"><a class="page-link text-dark" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a></li>
+			<li class="page-item current d-inline-flex"><a class="page-link text-dark" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+        	{% comment %} <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a> {% endcomment %}
+			<span aria-hidden="true">&raquo;</span>
+      		</a>
+    		</li>
+			{% endif %}
+		</span>
+	</ul>
+</nav>
+{% endif %}
+{% endblock body %}
+
+
+{% block script %}
+<script>
+var ctx = document.getElementById("myChart");
+var myChart = new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Completed', 'Ongoing', 'Not Completed', 'Abandoned'],
+    datasets: [{
+      label: '# of Tomatoes',
+      data: [{{cpromise_count}}, {{ppromise_count}}, {{ncpromise_count}}, {{apromise_count}}],
+      backgroundColor: [
+        'rgba(51, 204, 51, 0.9)',
+        'rgba(255, 153, 0, 0.9)',
+        'rgba(255, 0, 0, 0.9)',
+        'rgba(0, 0, 0, 0.9)'
+      ],
+      borderColor: [
+        'rgba(51, 204, 51, 1)',
+        'rgba(255, 153, 0, 1)',
+        'rgba(255, 0, 0, 1)',
+        'rgba(0, 0, 0, 1)'
+      ],
+      borderWidth: 1
+    }]
+  },
+  options: {
+   	//cutoutPercentage: 40,
+    responsive: false,
+
+  }
+});
+
+$('.number').each(function () {
+    $(this).prop('Counter',0).animate({
+        Counter: $(this).text()
+    }, {
+        duration: 1000,
+        easing: 'swing',
+        step: function (now) {
+            $(this).text(Math.ceil(now));
+        }
+    });
+});
+</script>
+{% endblock script %}
